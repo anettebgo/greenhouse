@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="js/lib/jquery-1.11.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+
+console.log("control initialized");
+
+$(document).ready(function() {
+  var socket = io.connect('http://10.10.12.130:8080')
+  socket.on('robot connected', function(data) {
+    console.log(data);
+    socket.emit('robot command', {command: 'nothing'});
+  });
+
+  $('#do-toggle-light').click(function(){
+    socket.emit('robot command', { command: 'toggle-light' });
+  });
+
+}); 
+</script>
+  </head>
+  <body>
+    <button id="do-toggle-light">lys</button>	
+  </body>
+</html>
+
