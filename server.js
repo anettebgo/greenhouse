@@ -15,6 +15,9 @@ app.get('/', function(req, res){
 
 
 var five = require('johnny-five');
+var fs = require('fs');
+var time = require('moment');
+
 var board;
 var light;
 var photoresistor;
@@ -74,7 +77,11 @@ board.on('ready', function(){
   });
   
   photoresistor.on("data", function() {
-    //console.log("photo: " + this.value);
+    fs.appendFile("logs/photo.csv", 
+	time().format() + " " + this.value + "\n", 
+	function(err){
+	  if(err) {throw err};
+    });
     if(this.value > darkness){
 	if(nightTime()){
 	  console.log("No light - nighttime");
