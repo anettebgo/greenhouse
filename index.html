@@ -9,7 +9,7 @@ console.log("control initialized");
 
 $(document).ready(function() {
   var socket = io.connect('http://10.10.12.130:8080')
-  socket.on('robot connected', function(data) {
+  socket.on('board connected', function(data) {
     console.log(data);
     socket.emit('robot command', {command: 'nothing'});
   });
@@ -18,11 +18,21 @@ $(document).ready(function() {
     socket.emit('robot command', { command: 'toggle-light' });
   });
 
+  $('#do-open').click(function(){
+    socket.emit('robot command', { command: 'servo-open' });
+  });
+
+  $('#do-close').click(function(){
+    socket.emit('robot command', { command: 'servo-close' });
+  });
+
 }); 
 </script>
   </head>
   <body>
-    <button id="do-toggle-light">lys</button>	
+    <button id="do-toggle-light">light</button>	
+    <button id="do-open">left</button>	
+    <button id="do-close">right</button>	
   </body>
 </html>
 

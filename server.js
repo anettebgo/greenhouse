@@ -19,8 +19,13 @@ var board;
 var light;
 var photoresistor;
 var temperature;
+var servo;
+
 var darkness = 300;
 var cold = 165;
+
+var open = 0;
+var close = 180;
 
 board = new five.Board();
 
@@ -28,6 +33,14 @@ board.on('ready', function(){
   light = new five.Led(9);
   heatlight = new five.Led(10);
   
+  servo = new five.Servo({
+    pin: 8,
+    range: [0, 180],
+    type: "standard",
+    startAt: 90,
+    center: false,
+  });
+
   photoresistor = new five.Sensor({
     pin: "A0",
     freq: 250
@@ -39,19 +52,11 @@ board.on('ready', function(){
   });
 
   this.repl.inject({
-    pot: photoresistor
-  });
-
-  this.repl.inject({
-    pot: temperature
-  });
-
-  this.repl.inject({
-    led: heatlight
-  });
-
-  this.repl.inject({
-    led: light
+    pot: photoresistor,
+    pot: temperature,
+    led: heatlight,
+    led: light,
+    s: servo
   });
   
   photoresistor.on("data", function() {
@@ -71,15 +76,12 @@ board.on('ready', function(){
 	heatlight.off();
     };
 
-
   });
-
-
 });
 
   
   
-io.sockets.on('connection', function(socket){
+io.on('connection', function(socket){
   
   socket.emit('board connected', {data: 'Connected'});
   
@@ -90,7 +92,16 @@ io.sockets.on('connection', function(socket){
     var command = data.command;
     if(command == "toggle-light"){
       light.toggle();
-    }
+    };
+    
+    if(command == "servo-open"){
+      servo.to(open);
+    };
+    
+    if(command == "servo-close"){
+      servo.to(close);
+    };
+
   });
 });
 
