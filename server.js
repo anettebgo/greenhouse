@@ -21,11 +21,25 @@ var photoresistor;
 var temperature;
 var servo;
 
+var pollingFrequency = 3000;
 var darkness = 300;
 var cold = 165;
 
 var open = 0;
 var close = 180;
+
+var bedtime = 20;
+var morning = 5;
+
+
+function nightTime(){
+  var date = new Date();
+  if(date.getHours() >= bedtime || date.getHours() <= morning){
+    return true;
+  }
+  return false;    
+};
+
 
 board = new five.Board();
 
@@ -43,12 +57,12 @@ board.on('ready', function(){
 
   photoresistor = new five.Sensor({
     pin: "A0",
-    freq: 250
+    freq: pollingFrequency 
   });
   
   temperature = new five.Sensor({
     pin: "A1",
-    freq: 2000
+    freq: pollingFrequency
   });
 
   this.repl.inject({
@@ -62,7 +76,11 @@ board.on('ready', function(){
   photoresistor.on("data", function() {
     //console.log("photo: " + this.value);
     if(this.value > darkness){
-	light.on();
+	if(nightTime()){
+	  console.log("No light - nighttime");
+        } else {
+	  light.on();
+        };
     } else {
 	light.off();
     };
