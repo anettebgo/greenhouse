@@ -78,7 +78,7 @@ board.on('ready', function(){
   
   photoresistor.on("data", function() {
     fs.appendFile("logs/photo.csv", 
-	time().format() + " " + this.value + "\n", 
+	time().format() + "\t " + this.value + "\n", 
 	function(err){
 	  if(err) {throw err};
     });
