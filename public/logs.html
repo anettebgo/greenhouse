@@ -64,7 +64,7 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-d3.text("photo_snapshot.csv", function(text) {
+d3.text("logs/photo.tsv", function(text) {
   var data = d3.tsv.parseRows(text).map(function(row){
     return row.map(function(value){
       return value;
