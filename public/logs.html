@@ -101,6 +101,39 @@ d3.text("logs/photo.tsv", function(text) {
       .attr("d", line);
 });
 
+var refresh = setInterval(function(){
+d3.text("logs/photo.tsv", function(text) {
+  var data = d3.tsv.parseRows(text).map(function(row){
+    return row.map(function(value){
+      return value;
+    });
+  });
+
+  data.forEach(function(d) {
+    d[0] = parseDate(d[0]); //timestamp
+    d[1] = +d[1]; //sensor value
+  });
+
+  x.domain(d3.extent(data, function(d) { return d[0]; }));
+  y.domain(d3.extent(data, function(d) { return d[1]; }));
+
+  svg.select(".x")
+      .call(xAxis);
+
+  svg.select(".y")
+      .call(yAxis)
+
+  svg.select(".line")
+      .datum(data)
+      .attr("d", line);
+});
+}, 3000);
+
+</script>
+</body>
+</html>
+
+
 </script>
 </body>
 </html>
