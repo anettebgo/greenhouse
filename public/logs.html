@@ -54,8 +54,8 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
 var line = d3.svg.line()
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.close); });
+    .x(function(d) { return x(d[0]); })
+    .y(function(d) { return y(d[1]); });
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -63,17 +63,22 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var tmp;
 
-d3.tsv("photo_snapshot.csv", function(error, data) {
-  console.log(data);
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
-    d.close = +d.close;
+d3.text("photo_snapshot.csv", function(text) {
+  var data = d3.tsv.parseRows(text).map(function(row){
+    return row.map(function(value){
+      return value;
+    });
   });
 
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-  y.domain(d3.extent(data, function(d) { return d.close; }));
+  console.log(data);
+  data.forEach(function(d) {
+    d[0] = parseDate(d[0]); //timestamp
+    d[1] = +d[1]; //sensor value
+  });
+
+  x.domain(d3.extent(data, function(d) { return d[0]; }));
+  y.domain(d3.extent(data, function(d) { return d[1]; }));
 
   svg.append("g")
       .attr("class", "x axis")
