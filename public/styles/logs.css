@@ -13,6 +13,11 @@ body {
   -webkit-transform: translate(0px, 460px);  
 }
 
+.y-label {
+  -webkit-transform: translate( 20px, 0px) rotate(-90deg);
+  text-anchor: end;
+}
+
 .line {
   fill: none;
   stroke: steelblue;
