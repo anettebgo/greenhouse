@@ -9,12 +9,20 @@ body {
   shape-rendering: crispEdges;
 }
 
-.x.axis path {
-  display: none;
+.x.axis {
+  -webkit-transform: translate(0px, 460px);  
 }
 
 .line {
   fill: none;
   stroke: steelblue;
   stroke-width: 1.5px;
+}
+
+svg {
+  padding-top: 20px;
+  padding-left: 40px;
+  margin: 30px;
+  width: 890px;
+  height: 500px;
 }
