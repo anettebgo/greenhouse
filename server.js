@@ -21,6 +21,7 @@ var time = require('moment');
 var board;
 var light;
 var photoresistor;
+var humidity;
 var temperature;
 var servo;
 
@@ -43,6 +44,13 @@ function nightTime(){
   return false;    
 };
 
+function log(name, value){
+    fs.appendFile("public/logs/" + name + ".tsv", 
+	time().format() + "\t " + value + "\n", 
+	function(err){
+	  if(err) {throw err};
+    });
+};
 
 board = new five.Board();
 
@@ -68,7 +76,13 @@ board.on('ready', function(){
     freq: pollingFrequency
   });
 
+  humidity  = new five.Sensor({
+    pin: "A2",
+    freq: pollingFrequency
+  });
+
   this.repl.inject({
+    pot: humidity,
     pot: photoresistor,
     pot: temperature,
     led: heatlight,
@@ -76,12 +90,13 @@ board.on('ready', function(){
     s: servo
   });
   
+  humidity.on("data", function() {
+    log("humidity", this.value);
+    console.log("humidity: " + this.value);  
+  });
+
   photoresistor.on("data", function() {
-    fs.appendFile("public/logs/photo.tsv", 
-	time().format() + "\t " + this.value + "\n", 
-	function(err){
-	  if(err) {throw err};
-    });
+    log("photo", this.value);    
     if(this.value > darkness){
 	if(nightTime()){
 	  console.log("No light - nighttime");
@@ -94,6 +109,7 @@ board.on('ready', function(){
   });
 
   temperature.on("data", function() {
+    log("temperature", this.value);
     console.log("temp: " + this.value);
     if(this.value < cold){
 	heatlight.on();
