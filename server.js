@@ -57,7 +57,9 @@ board = new five.Board();
 board.on('ready', function(){
   light = new five.Led(9);
   heatlight = new five.Led(10);
-  
+
+  var fan = new five.Pin(12); 
+ 
   servo = new five.Servo({
     pin: 8,
     range: [0, 180],
@@ -113,7 +115,11 @@ board.on('ready', function(){
     console.log("temp: " + this.value);
     if(this.value < cold){
 	heatlight.on();
+        console.log("c-c-c-cold");
+        fan.low();
     } else {
+	console.log("toasty");
+        fan.high();
 	heatlight.off();
     };
 
