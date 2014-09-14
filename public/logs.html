@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" type="text/css" href="styles/logs.css" />
     <script src="http://d3js.org/d3.v3.js"></script>
+    <script src="js/lib/jquery-1.11.1.min.js"></script>
   </head>
   <body>  
   
@@ -20,69 +21,85 @@ var line = d3.svg.line()
     .x(function(d) { return x(d[0]); })
     .y(function(d) { return y(d[1]); });
 
-var svg = d3.select("body").append("svg")
 
 
-d3.text("logs/photo.tsv", function(text) {
-  var data = d3.tsv.parseRows(text).map(function(row){
-    return row.map(function(value){
-      return value;
+
+var drawGraph = function(name){
+  var svg = d3.select("body").append("svg")
+		.attr("id", name);
+		  
+d3.text("logs/" + name + ".tsv", function(text) {
+    var data = d3.tsv.parseRows(text).map(function(row){
+      return row.map(function(value){
+        return value;
+      });
     });
-  });
 
-  console.log(data);
-  data.forEach(function(d) {
-    d[0] = parseDate(d[0]); //timestamp
-    d[1] = +d[1]; //sensor value
-  });
-
-  x.domain(d3.extent(data, function(d) { return d[0]; }));
-  y.domain(d3.extent(data, function(d) { return d[1]; }));
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("class", "y-label")
-      .text("Darkness");
-
-  svg.append("path")
-      .datum(data)
-      .attr("class", "line")
-      .attr("d", line);
-});
-
-var refresh = setInterval(function(){
-d3.text("logs/photo.tsv", function(text) {
-  var data = d3.tsv.parseRows(text).map(function(row){
-    return row.map(function(value){
-      return value;
+    data.forEach(function(d) {
+      d[0] = parseDate(d[0]); //timestamp
+      d[1] = +d[1]; //sensor value
     });
+
+    x.domain(d3.extent(data, function(d) { return d[0]; }));
+    y.domain(d3.extent(data, function(d) { return d[1]; }));
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("class", "y-label")
+        .text(name);
+
+    svg.append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("d", line);
   });
+};
 
-  data.forEach(function(d) {
-    d[0] = parseDate(d[0]); //timestamp
-    d[1] = +d[1]; //sensor value
-  });
+function setUpdateGraph(name){
+  var svg = d3.select("#" + name);
+  var refreshGraph = setInterval(function(){
+    d3.text("logs/" + name + ".tsv", function(text) {
+      var data = d3.tsv.parseRows(text).map(function(row){
+        return row.map(function(value){
+          return value;
+        });
+      });
 
-  x.domain(d3.extent(data, function(d) { return d[0]; }));
-  y.domain(d3.extent(data, function(d) { return d[1]; }));
+      data.forEach(function(d) {
+        d[0] = parseDate(d[0]); //timestamp
+        d[1] = +d[1]; //sensor value
+      });
 
-  svg.select(".x")
-      .call(xAxis);
+      x.domain(d3.extent(data, function(d) { return d[0]; }));
+      y.domain(d3.extent(data, function(d) { return d[1]; }));
 
-  svg.select(".y")
-      .call(yAxis)
+      svg.select(".x")
+        .call(xAxis);
 
-  svg.select(".line")
-      .datum(data)
-      .attr("d", line);
-});
-}, 3000);
+      svg.select(".y")
+        .call(yAxis)
+
+      svg.select(".line")
+        .datum(data)
+        .attr("d", line);
+    });
+  }, 3000);
+};
+
+drawGraph("photo");
+setUpdateGraph("photo");
+
+drawGraph("humidity");
+setUpdateGraph("humidity");
+
+drawGraph("temperature");
+setUpdateGraph("temperature");
 
 </script>
 </body>
