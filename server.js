@@ -18,12 +18,8 @@ var five = require('johnny-five');
 var fs = require('fs');
 var time = require('moment');
 
-var board;
-var light;
-var photoresistor;
-var humidity;
-var temperature;
-var servo;
+var board, light, heatlight,
+photoresistor, humidity, temperature, servo, fan, pump;
 
 var pollingFrequency = 3000;
 var darkness = 300;
@@ -35,6 +31,7 @@ var close = 180;
 var bedtime = 20;
 var morning = 5;
 
+var dry = 150;
 
 function nightTime(){
   var date = new Date();
@@ -58,7 +55,8 @@ board.on('ready', function(){
   light = new five.Led(9);
   heatlight = new five.Led(10);
 
-  var fan = new five.Pin(12); 
+  fan = new five.Pin(12); 
+  pump = new five.Pin(7);
  
   servo = new five.Servo({
     pin: 8,
@@ -95,6 +93,11 @@ board.on('ready', function(){
   humidity.on("data", function() {
     log("humidity", this.value);
     console.log("humidity: " + this.value);  
+    if(this.value < dry){
+      pump.high();
+      console.log("watering, watering");
+      setTimeout(function(){pump.low();}, 3000);//pump water for three sec.
+    };
   });
 
   photoresistor.on("data", function() {
@@ -112,13 +115,10 @@ board.on('ready', function(){
 
   temperature.on("data", function() {
     log("temperature", this.value);
-    console.log("temp: " + this.value);
     if(this.value < cold){
 	heatlight.on();
-        console.log("c-c-c-cold");
         fan.low();
     } else {
-	console.log("toasty");
         fan.high();
 	heatlight.off();
     };
