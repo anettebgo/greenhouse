@@ -26,13 +26,18 @@ $(document).ready(function() {
     socket.emit('robot command', { command: 'servo-close' });
   });
 
+  $('#do-water').click(function(){
+    socket.emit('robot command', { command: 'water' });
+  });
+
 }); 
 </script>
   </head>
   <body>
     <button id="do-toggle-light">light</button>	
-    <button id="do-open">left</button>	
-    <button id="do-close">right</button>	
+    <button id="do-open">open</button>	
+    <button id="do-close">close</button>	
+    <button id="do-water">right</button>	
   </body>
 </html>
 
