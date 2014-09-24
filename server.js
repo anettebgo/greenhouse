@@ -25,8 +25,8 @@ var pollingFrequency = 3000;
 var darkness = 300;
 var cold = 165;
 
-var open = 0;
-var close = 180;
+var open = 180;
+var close = 0;
 
 var bedtime = 20;
 var morning = 5;
@@ -62,7 +62,7 @@ board.on('ready', function(){
     pin: 8,
     range: [0, 180],
     type: "standard",
-    startAt: 90,
+    startAt: 0,
     center: false,
   });
 
@@ -118,7 +118,9 @@ board.on('ready', function(){
     if(this.value < cold){
 	heatlight.on();
         fan.low();
+        console.log("fan off"); 
     } else {
+        console.log("fan on");
         fan.high();
 	heatlight.off();
     };
@@ -132,7 +134,6 @@ io.on('connection', function(socket){
   
   socket.emit('board connected', {data: 'Connected'});
   
-
   socket.on('robot command', function(data){
     
     console.log(data);
@@ -148,6 +149,11 @@ io.on('connection', function(socket){
     if(command == "servo-close"){
       servo.to(close);
     };
+    
+    if(command == "water"){
+      pump.high();
+      setTimeout(function(){pump.low();}, 5000)
+    };      
 
   });
 });
