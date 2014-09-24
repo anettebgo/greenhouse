@@ -102,29 +102,34 @@ board.on('ready', function(){
 
   photoresistor.on("data", function() {
     log("photo", this.value);    
+    console.log("photo: " + this.value);
     if(this.value > darkness){
 	if(nightTime()){
 	  console.log("No light - nighttime");
         } else {
 	  light.on();
+	  console.log("turning light on");
         };
     } else {
 	light.off();
+	console.log("turning light off");
     };
   });
 
   temperature.on("data", function() {
     log("temperature", this.value);
+    console.log("temperature: " + this.value);
     if(this.value < cold){
 	heatlight.on();
         fan.low();
+        servo.to(close);
         console.log("fan off"); 
     } else {
         console.log("fan on");
         fan.high();
+        servo.to(open);
 	heatlight.off();
     };
-
   });
 });
 
