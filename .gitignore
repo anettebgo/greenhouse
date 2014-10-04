@@ -2,3 +2,4 @@
 .*.swo
 public/logs/*.tsv
 .DS_Store
+*.key
